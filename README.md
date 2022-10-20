@@ -1,6 +1,6 @@
 # About-Me
 ### I wrangle, 🪥 clean data
-'''MySQL
+```SQL
 SELECT * 
 FROM pizza;
-'''
+```
