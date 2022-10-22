@@ -90,6 +90,9 @@ SELECT
   ON s.product_id = menu.product_id
   GROUP BY customer_id;
 ```
+and we got the table below as the total amount each customer spent at the restaurant
+
+![total amount each customer spent at the restaurant](https://user-images.githubusercontent.com/24557310/197329054-0200ed96-1860-4458-ac75-0b5e9d42a46f.png)
 
 2. How many days has each customer visited the restaurant?
 
