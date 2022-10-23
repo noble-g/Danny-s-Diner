@@ -23,15 +23,15 @@ Danny has shared with you 3 key datasets for this case study:
 You can inspect the entity relationship diagram and example data below.
 
 ----------
-[image](https://user-images.githubusercontent.com/24557310/196964165-67363a15-c588-4932-955f-a4990de785b4.png)
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://dbdiagram.io/embed/608d07e4b29a09603d12edbd
+![ER Diagram of Danny's Diner](https://github.com/noble-g/Danny-s-Diner/blob/main/ER%20scrnsht.png)
+<!--<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/noble-g/Danny-s-Diner/blob/main/ER%20scrnsht.png
 ">
-  <source media="(prefers-color-scheme: light)" srcset="https://dbdiagram.io/embed/608d07e4b29a09603d12edbd
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/noble-g/Danny-s-Diner/blob/main/ER%20scrnsht.png
 ">
-  <img alt="The ER diagram of Danny's Diner." src="https://dbdiagram.io/embed/608d07e4b29a09603d12edbd
+  <img alt="The ER diagram of Danny's Diner." src="https://github.com/noble-g/Danny-s-Diner/blob/main/ER%20scrnsht.png
 ">
-</picture>
+</picture>-->
 
 ## Datasets
 All datasets exist within the dannys_diner database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
@@ -103,6 +103,7 @@ SELECT
 from sales as s
 group by customer_id;
 ```
+![number of days visited](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%202.png)
 
 3. What was the first item from the menu purchased by each customer?
 ```MySQL
@@ -134,6 +135,8 @@ order by s.customer_id
 limit 1
 );
 ```
+![First item purchased by each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%203.png)
+
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 ```MySQL
 select m.product_name, count(s.product_id) as product_count 
@@ -154,6 +157,7 @@ join menu as m
 on s.product_id = m.product_id
 group by m.product_id) AS derived;
 ```
+![Most purchased item on the menu](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%204.png)
 
 5. Which item was the most popular for each customer?
 ```MySQL
@@ -175,6 +179,7 @@ from popularity_cte
 group by customer_id;
 
 ```
+![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%205.png)
 
 6. Which item was purchased first by the customer after they became a member?
 ```MySQL
@@ -192,6 +197,8 @@ ORDER BY customer_id,order_date
 ;
 
 ```
+![1^st^ purchase](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%206.png)
+
 7. Which item was purchased just before the customer became a member?
 ```MySQL
 SELECT sales.customer_id, 
@@ -206,8 +213,9 @@ WHERE sales.order_date < members.join_date
 GROUP BY customer_id
 ORDER BY order_date
 ;
-
 ```
+![purchase before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%207.png)
+
 8. What is the total items and amount spent for each member before they became a member?
 ```MySQL
 SELECT 
@@ -224,8 +232,9 @@ WHERE
     s.order_date < members.join_date
 GROUP BY s.customer_id
 ;
-
 ```
+![Total amount spent before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%208.png)
+
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```MySQL
 select s.customer_id, 
@@ -243,6 +252,7 @@ on s.product_id = points_table.product_id
 group by s.customer_id
 ;
 ```
+![points per $](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%209.png)
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 
 ```MySQL
@@ -281,12 +291,11 @@ select customer_id,
 from promo_cte
 group by customer_id 
 ;
-
 ```
 
 ### Bonus Question
 A. ####Join All The Things
-From the data given so far, create a tablethat'll have the columns:
+From the data given so far, create a table that'll have the columns:
 * `customer_id`
 * `order_date`
 * `product_name`
@@ -307,8 +316,8 @@ LEFT JOIN menu AS m
 ON s.product_id = m.product_id
 LEFT JOIN members as mem
 ON s.customer_id = mem.customer_id;
-
 ```
+![Join All Things](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/bonus%201.png)
 
 B. #### Rank All The Things
 Danny also requires further information about the `ranking` of customer products, but he purposely does not need the `ranking` for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
@@ -336,3 +345,4 @@ select cust_prod_ranking.*,
     end as ranking
 from cust_prod_ranking;
 ```
+![Rank All Things](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/bonus%202.png)
