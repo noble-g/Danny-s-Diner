@@ -5,7 +5,7 @@ Danny's Diner is the 1st case sudy in the ['#8weeksSQLchallenge](https://8weeksq
 
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: *sushi, curry and ramen*.
 
-Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
+Danny’s Diner is in need of my assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
 
 ## Problem Statement
 
@@ -13,14 +13,14 @@ Danny wants to use the data to answer a few simple questions about his customers
 
 He plans on using these insights to help him decide whether he should expand the existing customer loyalty program - additionally he needs help to generate some basic datasets so his team can easily inspect the data without needing to use SQL.
 
-Danny has provided you with a sample of his overall customer data due to privacy issues - but he hopes that these examples are enough for you to write fully functioning SQL queries to help him answer his questions!
+Danny has provided me with a sample of his overall customer data due to privacy issues - but he hopes that these examples are enough for me to write fully functioning SQL queries to help him answer his questions!
 
-Danny has shared with you 3 key datasets for this case study:
+Danny has shared with me 3 key datasets for this case study:
 
 * `sales`
 * `menu`
 * `members`
-You can inspect the entity relationship diagram and example data below.
+The entity relationship diagram and example data are abelow.
 
 ----------
 ![ER Diagram of Danny's Diner](https://github.com/noble-g/Danny-s-Diner/blob/main/ER%20scrnsht.png)
@@ -34,7 +34,7 @@ You can inspect the entity relationship diagram and example data below.
 </picture>-->
 
 ## Datasets
-All datasets exist within the dannys_diner database schema - be sure to include this reference within your SQL scripts as you start exploring the data and answering the case study questions.
+All datasets exist within the dannys_diner database schema
 
 ### Table 1: sales
 The sales table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered
@@ -76,8 +76,7 @@ The final `members` table captures the `join_date` when a `customer_id` joined t
 |A  |2021-01-07|
 |B	|2021-01-09|
 
-###                                                           Case Study Questions
-Each of the following case study questions can be answered using a single SQL statement:
+###                                                           Case Study Question
 
 1. What is the total amount each customer spent at the restaurant?
 
@@ -90,6 +89,7 @@ SELECT
   ON s.product_id = menu.product_id
   GROUP BY customer_id;
 ```
+we used the `SUM(price)` to obtain the total amount spent at the restaurant and we grouped by `customer_id` using the line `GROUP BY customer_id` in the code above to obtain the `total_amount_spent` for *each customer*. And of course, `AS` was used to give the total column a befitting alias - `total_amount_spent`
 and we got the table below as the total amount each customer spent at the restaurant
 
 ![total amount each customer spent at the restaurant](https://user-images.githubusercontent.com/24557310/197329054-0200ed96-1860-4458-ac75-0b5e9d42a46f.png)
@@ -103,6 +103,8 @@ SELECT
 from sales as s
 group by customer_id;
 ```
+We used the function `count(distinct(order_date))` to count the unique `order_date` that the customers have visited the restaurant. We then obtained for *each* customer by using the `group by customer_id` statement and thus, the following table was obtained
+
 ![number of days visited](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%202.png)
 
 3. What was the first item from the menu purchased by each customer?
@@ -110,8 +112,8 @@ group by customer_id;
 with ranked_purchase_cte as  
 (select 
 	s.customer_id,
-    s.order_date,
-    m.product_name,
+	s.order_date,
+    	m.product_name,
 	dense_rank() over(partition by s.customer_id 
     order by s.order_date) as ranking
 from sales as s join menu as m
@@ -123,7 +125,11 @@ where ranking  = 1
 group by customer_id
 ;
 ```
-...or we could try another approach to this question, either way we'll be getting similar result
+To know the 1st item purchased by each customer from the menu without hardcoding it, we first need to rank the orders for each customer and that's what we have done in the common table expression (CTE) with the dense_rank() function where we `order by order_date` and `partition by customer_id` while aliasing the dense_rank() as `ranking` and the CTE as `ranked_purchase_cte`. you can check out ![here](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and ![here](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) to know more about ![CTE](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and ![dense rank](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) respectively
+Since our interest is in the first item purchased by each customer from the menu, we selected the needed columns `where ranking = 1` while grouping by `customer_id`
+
+There are many ways to kill a rat or so they say, we could try another approach to this question. infact, a much simpler approach. Either way we'll be getting the same result
+
 ```MySQL
 select s.customer_id, m.product_name
 from sales as s 
@@ -133,8 +139,10 @@ where order_date = (select order_date
 from sales
 order by s.customer_id
 limit 1
-);
+)
+group by s.customer_id;
 ```
+Here, we used a subquery to obtain the first date and filter the `order date`
 ![First item purchased by each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%203.png)
 
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
