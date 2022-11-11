@@ -125,7 +125,7 @@ where ranking  = 1
 group by customer_id
 ;
 ```
-To know the 1st item purchased by each customer from the menu without hardcoding it, we first need to rank the orders for each customer and that's what we have done in the common table expression (CTE) with the dense_rank() function where we `order by order_date` and `partition by customer_id` while aliasing the dense_rank() as `ranking` and the CTE as `ranked_purchase_cte`. you can check out ![here](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and ![here](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) to know more about ![CTE](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and ![dense rank](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) respectively
+To know the 1st item purchased by each customer from the menu without hardcoding it, we first need to rank the orders for each customer and that's what we have done in the common table expression (CTE) with the dense_rank() function where we `order by order_date` and `partition by customer_id` while aliasing the dense_rank() as `ranking` and the CTE as `ranked_purchase_cte`. you can check out [here](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and [here](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) to know more about [CTE](https://mode.com/blog/use-common-table-expressions-to-keep-your-sql-clean/) and [dense rank](https://towardsdatascience.com/how-to-use-sql-rank-and-dense-rank-functions-7c3ebf84b4e8) respectively
 Since our interest is in the first item purchased by each customer from the menu, we selected the needed columns `where ranking = 1` while grouping by `customer_id`
 
 There are many ways to kill a rat or so they say, we could try another approach to this question. infact, a much simpler approach. Either way we'll be getting the same result
@@ -142,10 +142,11 @@ limit 1
 )
 group by s.customer_id;
 ```
-Here, we used a subquery to obtain the first date and filter the `order date`
-![First item purchased by each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%203.png)
+Here, we used a subquery to obtain the first date from the sales table and then filter the `order date` by the first row of the subquery result which was obtained by using the snippet `limit = 1` in the subquery. Then, we `group by s.customer_id` to obtain the first order in the first day for each customer since there are more than one order for each customer on the first day   
 
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+![First item purchased by each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%203.png)     
+
+4. What is the most purchased item on the menu and how many times was it purchased by all customers?  
 ```MySQL
 select m.product_name, count(s.product_id) as product_count 
 from sales as s
@@ -155,6 +156,8 @@ group by m.product_id
 order by count(s.product_id) DESC
 LIMIT 1 ;
 ```
+
+to obtain the most purchased item on the menu, we first need to join the concerned tables i.e the sales table and the menu table (PS: default `join` in SQL is the inner join.) Then, we `select count(s.product_id) as product_count` and order by the count function in descending order before limiting our result to the first row which is the *most purchased item on the menu* 
 Another method for the 4th question
 
 ```MySQL
@@ -165,6 +168,7 @@ join menu as m
 on s.product_id = m.product_id
 group by m.product_id) AS derived;
 ```
+Here, we used the max() function to obtain the product in the menu with maximum count after which we had written a subquery - __derived__ whichh basically selects the products and their respective counts.   
 ![Most purchased item on the menu](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%204.png)
 
 5. Which item was the most popular for each customer?
@@ -187,6 +191,13 @@ from popularity_cte
 group by customer_id;
 
 ```
+Before jumping into the coding aspect, we first need to understand the question.
+the question says *Which item was the most popular for each customer*, key-phrases are *most popular* and *each customer* 
+most poular item for each customer - that is, item each customer bought the most (i.e: product with highest count for each customer).
+After understanding the question, we proceeded to create a Common Table Expression (CTE) called popularity_cte, the `popularity_cte` used the count() function on `product_id` to count all products then it grouped the count by customer and product, 
+
+![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/5a.png)
+
 ![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%205.png)
 
 6. Which item was purchased first by the customer after they became a member?
