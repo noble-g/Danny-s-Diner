@@ -194,13 +194,15 @@ group by customer_id;
 Before jumping into the coding aspect, we first need to understand the question.
 the question says *Which item was the most popular for each customer*, key-phrases are *most popular* and *each customer* 
 most poular item for each customer - that is, item each customer bought the most (i.e: product with highest count for each customer).
-After understanding the question, we proceeded to create a Common Table Expression (CTE) called popularity_cte, the `popularity_cte` used the count() function on `product_id` to count all products then it grouped the count by customer and product, 
+After understanding the question, we proceeded to create a Common Table Expression (CTE) called popularity_cte, the `popularity_cte` used the count() function on `product_id` to count all products and alias it as `order_count` then it grouped the count by customer and product, and ordered by count and customer.   
+the popularity_cte will result in this table below:
 
 ![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/5a.png)
 
-![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%205.png)
+Thus from the popularity_cte, we select the maximum count using the max() function and other important attributes like the `customer_id`, `product_name` and `order_count`, we then further on to `group by customer_id` and the resulting and final table looks like this   
+![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%205.png)   
 
-6. Which item was purchased first by the customer after they became a member?
+6. Which item was purchased first by the customer after they became a member?   
 ```MySQL
 SELECT sales.customer_id, 
 	sales.order_date,
@@ -216,7 +218,16 @@ ORDER BY customer_id,order_date
 ;
 
 ```
-![1^st^ purchase](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%206.png)
+Quite tricky a question, It is tricky because we need to answer these questions before we can proceed:
+* are all customers members?
+* if not, which of the customers are members and which are not?
+* when did each member gain membership?
+* which items were purchased after they gained membership?
+* and lastly, which items was  purchased first immediately after they gained membership?   
+
+This question exhausts all the tables in the database - sales, menu and members table.  To answer the implicit questions, we filtered the query by the where statement `WHERE sales.order_date >= members.join_date` with the assumption that the customers joined members before ordering on the day they joined, therefore the `>=` filter. The `group by` statement was used to limit all the items bought by each members on the day they joined to the very first product purchased that very day i.e the item that was purchased first immediately after they gained membership.   
+
+![1^st^ purchase](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%206.png)   
 
 7. Which item was purchased just before the customer became a member?
 ```MySQL
@@ -233,7 +244,9 @@ GROUP BY customer_id
 ORDER BY order_date
 ;
 ```
-![purchase before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%207.png)
+Similar to the last analysis and just as tricky, we are to obtain the very last product bought by each member as an ordinary customer before they joined. And that explains our usage of `<` in the filter statement `WHERE sales.order_date < members.join_date`.
+
+ ![purchase before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%207.png)
 
 8. What is the total items and amount spent for each member before they became a member?
 ```MySQL
@@ -252,6 +265,7 @@ WHERE
 GROUP BY s.customer_id
 ;
 ```
+the phrase *for each member* indicates we should group by customer_id after inner joining the requred tables. We applied the functions `count()` on `product_id` and `sum()` on `price`to obtain the total number of items and total amount respectively after which we joined all the tables in the schema   
 ![Total amount spent before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%208.png)
 
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
@@ -271,7 +285,8 @@ on s.product_id = points_table.product_id
 group by s.customer_id
 ;
 ```
-![points per $](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%209.png)
+![points per $](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%209.png)   
+
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 
 ```MySQL
