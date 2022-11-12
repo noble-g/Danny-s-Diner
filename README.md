@@ -285,9 +285,39 @@ on s.product_id = points_table.product_id
 group by s.customer_id
 ;
 ```
+A tricky one, imust confess.
+$1 = 10 points but sushi  = 2*$1 = $2
+therefore, from the menu table we  will create query that will look something like this:
+
+|product_name|price|points|
+|------------|----:|-----:|
+|Sushi|10|10*$2 = $20 | 
+|Curry|15|15*$1 = $15|
+|Ramen|12|12*$1 =$12|
+
+and thats what we have done in the subwuery we aliased as *points_table*
+we then join the sales table with points_table (the newly created subquery). After which we selected `sum(points_table.points)` and `sum(points_table.price)` for every customer. that is `group by s.customer_id`.
+The resulting table below is basically teling us the total points and total price for each customer's transaction history.
+
 ![points per $](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%209.png)   
 
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+
+
+Condition: In the first week of membership- members get 2X points, others get 1X poits while still upholding the earlier condition ($1 = 10 points but sushi  = 2*$1 = $2) in the question above (question 9).     
+
+The first week constraint make this analysis a bit more complicated than expected, therefore we find the date and duration of the first week for every member as all members did not gain membership on the same day. So, we used the `date_add()` function on `members.join_date` and used 6 days interval and join date as the 7th day which makes the week as the question clearly stated that *...including their join date...*.
+```MySQL
+select 
+	m.customer_id,
+	m.join_date,
+	date_add(m.join_date, interval 6 day) 
+from sales as s
+join members as m
+group by m.customer_id;
+```
+![first week start and end date](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/10%20a.png)   The table above shows us the only two customers who are members and their respective start and end date for the first week where the join date = the start of the week.
+
 
 ```MySQL
 select s.customer_id,
@@ -297,12 +327,21 @@ join members as m
 where s.order_date between m.join_date and date_add(m.join_date, interval 6 day)
 and s.customer_id in (select m.customer_id from members as m )
 ;
+```
+Having obtained the first week's start and end date for every member, we wrote a query to obtain the order dates that fall in between the first week of membership filtering with the snippet `where s.order_date between m.join_date and date_add(m.join_date, interval 6 day)
+and s.customer_id in (select m.customer_id from members as m )` .
+the subquery in the snippet was used to obtain `customer_id` from the table `members`   
+![order dates in the first week](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/10b.png)
 
--- then
+
+Having done all these, we have to calculate points for just the month of January, so we went ahead to write a CTE- promo_cte which obtained features from the sales table, members `join_date`, `date_add(m.join_date, interval 6 day)` as `1st_wk`, `end_of_january`, `product_name`, `price`, and `promo points` which was computed with the help of case when statement.
+We then used the promo_cte to compute the `total_member_points`
+
+```SQL
 with promo_cte as (
 select s.*,
 	m.join_date,
-    date_add(m.join_date, interval 6 day) as 1st_wk,
+    	date_add(m.join_date, interval 6 day) as 1st_wk,
 	last_day('2021-01-01') as end_of_january,
     menu.product_name,
     menu.price,
@@ -326,6 +365,8 @@ from promo_cte
 group by customer_id 
 ;
 ```
+
+![total_member_points](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/10c.png)    
 
 ### Bonus Question
 A. ####Join All The Things
@@ -351,6 +392,8 @@ ON s.product_id = m.product_id
 LEFT JOIN members as mem
 ON s.customer_id = mem.customer_id;
 ```
+the table below does not only gives us a comprehensive list of all orders, it also shows the customer ordering it, the product that was ordered, the order date, price of the product ordered, and finally whether the customer mking the order is a member or not, indicating membership wiht *Y* and otherwise with *N*   
+
 ![Join All Things](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/bonus%201.png)
 
 B. #### Rank All The Things
@@ -379,4 +422,22 @@ select cust_prod_ranking.*,
     end as ranking
 from cust_prod_ranking;
 ```
+Danny likes stressing the hell out of us :laugh: :laugh: :laugh: So, in addition to the bonus question A analyzed above, we helped Danny with the ranking of members-only using `case when` statement and `dense_rank` function
+
 ![Rank All Things](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/bonus%202.png)
+
+
+
+
+
+
+
+---
+I hope you gained somethings from this SQL analysis and technical write up, if you do kindly give this repo a star
+---
+criticize my work and connect with me on :
+* [LinkedIn](https://www.linkedin.com/in/oloyede-abdulganiyu-420785214)
+* [Twitter](https://twitter.com/NobleGee6?t=3OiaIJJ8Iu__0VaIYkL3Hg&s=09)
+* [Whatsapp](wa.link/keftwj)
+
+
