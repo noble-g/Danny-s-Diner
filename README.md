@@ -78,7 +78,7 @@ The final `members` table captures the `join_date` when a `customer_id` joined t
 
 ###                                                           Case Study Question
 
-1. What is the total amount each customer spent at the restaurant?
+#### 1. What is the total amount each customer spent at the restaurant?
 
 ```MySQL
 SELECT
@@ -94,7 +94,7 @@ and we got the table below as the total amount each customer spent at the restau
 
 ![total amount each customer spent at the restaurant](https://user-images.githubusercontent.com/24557310/197329054-0200ed96-1860-4458-ac75-0b5e9d42a46f.png)
 
-2. How many days has each customer visited the restaurant?
+#### 2. How many days has each customer visited the restaurant?
 
 ```MySQL
 SELECT 
@@ -107,7 +107,7 @@ We used the function `count(distinct(order_date))` to count the unique `order_da
 
 ![number of days visited](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%202.png)
 
-3. What was the first item from the menu purchased by each customer?
+#### 3. What was the first item from the menu purchased by each customer?
 ```MySQL
 with ranked_purchase_cte as  
 (select 
@@ -146,7 +146,7 @@ Here, we used a subquery to obtain the first date from the sales table and then 
 
 ![First item purchased by each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%203.png)     
 
-4. What is the most purchased item on the menu and how many times was it purchased by all customers?  
+####  4. What is the most purchased item on the menu and how many times was it purchased by all customers?  
 ```MySQL
 select m.product_name, count(s.product_id) as product_count 
 from sales as s
@@ -171,7 +171,7 @@ group by m.product_id) AS derived;
 Here, we used the max() function to obtain the product in the menu with maximum count after which we had written a subquery - __derived__ whichh basically selects the products and their respective counts.   
 ![Most purchased item on the menu](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%204.png)
 
-5. Which item was the most popular for each customer?
+#### 5. Which item was the most popular for each customer?
 ```MySQL
 with popularity_cte as (
 select s.customer_id,
@@ -202,7 +202,7 @@ the popularity_cte will result in this table below:
 Thus from the popularity_cte, we select the maximum count using the max() function and other important attributes like the `customer_id`, `product_name` and `order_count`, we then further on to `group by customer_id` and the resulting and final table looks like this   
 ![most popular item for each customer](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%205.png)   
 
-6. Which item was purchased first by the customer after they became a member?   
+#### 6. Which item was purchased first by the customer after they became a member?   
 ```MySQL
 SELECT sales.customer_id, 
 	sales.order_date,
@@ -229,7 +229,7 @@ This question exhausts all the tables in the database - sales, menu and members 
 
 ![1^st^ purchase](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%206.png)   
 
-7. Which item was purchased just before the customer became a member?
+#### 7. Which item was purchased just before the customer became a member?
 ```MySQL
 SELECT sales.customer_id, 
 	sales.order_date,
@@ -248,7 +248,7 @@ Similar to the last analysis and just as tricky, we are to obtain the very last 
 
  ![purchase before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%207.png)
 
-8. What is the total items and amount spent for each member before they became a member?
+#### 8. What is the total items and amount spent for each member before they became a member?
 ```MySQL
 SELECT 
     s.customer_id,
@@ -268,7 +268,7 @@ GROUP BY s.customer_id
 the phrase *for each member* indicates we should group by customer_id after inner joining the requred tables. We applied the functions `count()` on `product_id` and `sum()` on `price`to obtain the total number of items and total amount respectively after which we joined all the tables in the schema   
 ![Total amount spent before joining](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%208.png)
 
-9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+#### 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```MySQL
 select s.customer_id, 
 	sum(points_table.price),
@@ -301,7 +301,7 @@ The resulting table below is basically teling us the total points and total pric
 
 ![points per $](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/no%209.png)   
 
-10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+#### 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 
 
 Condition: In the first week of membership- members get 2X points, others get 1X poits while still upholding the earlier condition ($1 = 10 points but sushi  = 2*$1 = $2) in the question above (question 9).     
@@ -369,7 +369,7 @@ group by customer_id
 ![total_member_points](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/10c.png)    
 
 ### Bonus Question
-A. ####Join All The Things
+ ####  A. Join All The Things
 From the data given so far, create a table that'll have the columns:
 * `customer_id`
 * `order_date`
@@ -396,7 +396,7 @@ the table below does not only gives us a comprehensive list of all orders, it al
 
 ![Join All Things](https://github.com/noble-g/Danny-s-Diner/blob/main/wk1%20-%20Danny's%20diner/result%20pics/bonus%201.png)
 
-B. #### Rank All The Things
+ #### B.Rank All The Things
 Danny also requires further information about the `ranking` of customer products, but he purposely does not need the `ranking` for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
 
 ```MySQL
